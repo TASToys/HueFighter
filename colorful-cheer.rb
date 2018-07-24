@@ -6,8 +6,8 @@ require 'configatron'
 require_relative 'config.rb'
 =begin
 Huey.configure do |config|
- config.hue_ip = '192.168.1.244'
- config.uuid = "NqysWo8Fmlm4WE8M6Sxm-9UznfDoSnmFJOmg7q2g"
+ config.hue_ip = configatron.bridge
+ config.uuid = configatron.user
 end
 =end
 
@@ -36,25 +36,31 @@ EM.run do
 			ws.send "PONG :tmi.twitch.tv"
 			ws.pong
 		elsif msg.include?('PRIVMSG')
+			puts "Received message: #{msg.strip}"
+
 			if msg.include?('bits=500')
+				timeloop = Time.new
+				until timeloop == timeloop + 60
+					#make this loop for a minute.
+					lightmsg = $msg.split(';').select{ |word|
+						word.include?('color')
+					}.to_s
 
-				#make this loop for a minute.
-				lightmsg = $msg.split(';').select{ |word|
-					word.include?('color')
-				}.to_s
-
-				puts lightmsg
-				lightmsg1 = lightmsg.split('=').at(-1).delete('\"]')
-				puts lightmsg1
-				#bulb.update(rgb: lightmsg1)
+					puts lightmsg
+					lightmsg1 = lightmsg.split('=').at(-1).delete('\"]')
+					puts lightmsg1
+					#bulb.update(rgb: lightmsg1)
+					timeloop += 1
+				end
 			end
-
 		else
 			puts "Received message: #{msg.strip}"
 
 		end
 
+
 	end
+
 
 	ws.onclose do |code, reason|
 		puts "Disconnected with status code: #{code} #{reason}"
