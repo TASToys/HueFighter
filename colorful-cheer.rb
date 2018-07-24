@@ -38,20 +38,32 @@ EM.run do
 		elsif msg.include?('PRIVMSG')
 			puts "Received message: #{msg.strip}"
 
-			if msg.include?('bits=500')
-				timeloop = Time.new
-				until timeloop == timeloop + 60
-					#make this loop for a minute.
-					lightmsg = $msg.split(';').select{ |word|
-						word.include?('color')
-					}.to_s
+			if msg.include?('partymode')
+				#timeloop = Time.new
+				#until timeloop == timeloop + 60
+				#make this loop for a minute.
+				lightmsg = msg.split(';').select{ |word|
+					word.include?('color')
+				}.to_s
+
+				namemsg = msg.split(';').select{ |word|
+					word.include?('name')
+				}.to_s
+
+				puts lightmsg
+				if lightmsg == '[color=]'
+					lightmsg = "color=#{configatron.basecolor}"
 
 					puts lightmsg
-					lightmsg1 = lightmsg.split('=').at(-1).delete('\"]')
-					puts lightmsg1
-					#bulb.update(rgb: lightmsg1)
-					timeloop += 1
+
 				end
+				namemsg1 = namemsg.split('=').at(1).delete('[\"]')
+				lightmsg1 = lightmsg.split('=').at(-1).delete('\"]')
+				puts " #{namemsg1} #{lightmsg1}"
+
+				#bulb.update(rgb: lightmsg1)
+				#timeloop += 1
+				#end
 			end
 		else
 			puts "Received message: #{msg.strip}"
