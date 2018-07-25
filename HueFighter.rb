@@ -42,6 +42,7 @@ EM.run do
 			ws.send "PONG :tmi.twitch.tv"
 			ws.pong
 		elsif msg.include?('PRIVMSG')
+			msg = msg.downcase
 			#puts "Received message: #{msg.strip}"
 
 
