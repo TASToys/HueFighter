@@ -4,6 +4,8 @@ require 'websocket-eventmachine-client'
 require 'huey'
 require 'configatron'
 require_relative 'config.rb'
+
+
 =begin
 Huey.configure do |config|
  config.hue_ip = configatron.bridge
@@ -38,33 +40,36 @@ EM.run do
 		elsif msg.include?('PRIVMSG')
 			puts "Received message: #{msg.strip}"
 
-			if msg.include?('partymode')
-				#timeloop = Time.new
-				#until timeloop == timeloop + 60
-				#make this loop for a minute.
-				lightmsg = msg.split(';').select{ |word|
-					word.include?('color')
-				}.to_s
+=begin
+ if msg.include?('partymode')
+ lightmsg = msg.split(';').select{ |word|
+ word.include?('color')
+ }.to_s
 
-				namemsg = msg.split(';').select{ |word|
-					word.include?('name')
-				}.to_s
+ namemsg = msg.split(';').select{ |word|
+ word.include?('name')
+ }.to_s
 
-				puts lightmsg
-				if lightmsg == '[color=]'
-					lightmsg = "color=#{configatron.basecolor}"
+ puts lightmsg
+ lightmsg1 = lightmsg.delete('\[\]\"').split('=').at(-1)
+ if lightmsg1 == 'color'
+ lightmsg = "color=#{configatron.basecolor}"
 
-					puts lightmsg
+ end
+ puts "lightmsg1 = #{lightmsg1.inspect}"
+ puts "lightmsg1 is a #{lightmsg1.class}"
+ puts "lightmsg is a #{lightmsg.class}"
 
-				end
-				namemsg1 = namemsg.split('=').at(1).delete('[\"]')
-				lightmsg1 = lightmsg.split('=').at(-1).delete('\"]')
-				puts " #{namemsg1} #{lightmsg1}"
+ lightmsg1 = lightmsg.delete('\[\]\"').split('=').at(-1)
+ namemsg1 = namemsg.split('=').at(1).delete('[\"]')
+ puts " #{namemsg1} #{lightmsg1}"
 
-				#bulb.update(rgb: lightmsg1)
-				#timeloop += 1
-				#end
-			end
+ #bulb.update(rgb: lightmsg1)
+
+ #end
+
+ #end
+=end
 		else
 			puts "Received message: #{msg.strip}"
 
