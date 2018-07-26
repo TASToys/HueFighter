@@ -63,13 +63,14 @@ EM.run do
 
 				user_msg_arr[0] = user_msg_arr[0].delete_prefix(':')
 
-				user_msg = user_msg_arr.join(' ')
+				#user_msg = user_msg_arr.join(' ')
+
 
 				#puts user_msg
 
 				user_msg_arr.each{ |word|
 					hex_col = ''
-					puts word
+					#puts word
 					if(configatron.colors.has_key?(word))
 						#puts "name: #{configatron.colors[word]}"
 
@@ -104,7 +105,7 @@ EM.run do
 
 
 		else
-			puts "Received message: #{msg.strip}"
+			#puts "Received message: #{msg.strip}"
 
 		end
 
