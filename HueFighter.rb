@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env ruby2.5
 require 'eventmachine'
 require 'websocket-eventmachine-client'
 require 'huey'
@@ -10,15 +10,17 @@ $red = 127
 $green = 127
 $blue = 127
 
-
+=begin
 Huey.configure do |config|
-	config.hue_ip = configatron.bridge
-	config.uuid = configatron.user
+ config.hue_ip = configatron.bridge
+ config.uuid = configatron.user
 end
+
 
 group = Huey::Group.new(Huey::Bulb.find(1), Huey::Bulb.find(2))
 group.name = 'HueFighter'
 group.save
+=end
 
 $msg = nil
 
@@ -42,7 +44,7 @@ EM.run do
 
 			ws.send "PONG :tmi.twitch.tv"
 			ws.pong
-		elsif msg.include?('PRIVMSG')
+		elsif msg.include?(' PRIVMSG ')
 			msg = msg.downcase
 			#puts "Received message: #{msg.strip}"
 
@@ -95,7 +97,11 @@ EM.run do
 						$green = $green + ((cheer_col[1] - $green).to_f * interp_value).to_i
 						$blue = $blue + ((cheer_col[2] - $blue).to_f * interp_value).to_i
 
-						group.update(rgb: ColorConverter.hex($red, $green, $blue))
+						hex_out = ColorConverter.hex($red, $green, $blue)
+
+						puts "#{user_bit_amt} #{hex_out} \n"
+
+						# group.update(rgb: hex_out)
 					end
 
 				}
@@ -103,9 +109,10 @@ EM.run do
 
 			end
 
+		elsif msg.include?(' JOIN ') || msg.include?(' PART ')
 
 		else
-			#puts "Received message: #{msg.strip}"
+			puts "Received message: #{msg.strip}"
 
 		end
 
