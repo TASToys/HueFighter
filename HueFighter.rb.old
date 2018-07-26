@@ -7,15 +7,15 @@ require 'configatron'
 require_relative 'config.rb'
 
 $red = 127
-$green = 127
 $blue = 127
+$green = 127
 
-=begin
+
 Huey.configure do |config|
- config.hue_ip = configatron.bridge
- config.uuid = configatron.user
+	config.hue_ip = configatron.bridge
+	config.uuid = configatron.user
 end
-=end
+
 
 #bulb = Huey::Bulb.find("#{rand(1..4)}")
 
@@ -45,35 +45,6 @@ EM.run do
 			msg = msg.downcase
 			#puts "Received message: #{msg.strip}"
 
-			metadata = msg.split(' ')[0]
-
-			if(metadata.include?('bits='))
-
-				user_msg_arr = msg.split(' ')
-
-				user_bit_amt = user_msg_arr[0].scan(/bits=(\d+)/).last.first
-
-				#puts user_bit_amt
-
-				user_msg_arr.shift
-				user_msg_arr.shift
-				user_msg_arr.shift
-				user_msg_arr.shift
-
-				user_msg_arr[0] = user_msg_arr[0].delete_prefix(':')
-
-				user_msg = user_msg_arr.join(' ')
-
-				#puts user_msg
-
-				user_msg_arr.each{ |word|
-
-
-				}
-
-
-			end
-
 
 			if msg.include?('red')
 				redmsg = msg.split(' ')
@@ -87,7 +58,7 @@ EM.run do
 				$blue = $blue - redmsg2
 
 				hexcolor = ColorConverter.hex($red.clamp(0, 255), $green.clamp(0, 255), $blue.clamp(0, 255))
-				#Huey::Bulb.all.update(rgb: hexcolor)
+				Huey::Bulb.all.update(rgb: hexcolor)
 				print hexcolor
 
 			elsif msg.include?('green')
@@ -102,7 +73,7 @@ EM.run do
 				$blue = $blue - grnmsg2
 
 				hexcolor = ColorConverter.hex($red.clamp(0, 255), $green.clamp(0, 255), $blue.clamp(0, 255))
-				#Huey::Bulb.all.update(rgb: hexcolor)
+				Huey::Bulb.all.update(rgb: hexcolor)
 				print hexcolor
 
 			elsif msg.include?('blue')
@@ -118,13 +89,15 @@ EM.run do
 
 
 				hexcolor = ColorConverter.hex($red.clamp(0, 255), $green.clamp(0, 255), $blue.clamp(0, 255))
-				#Huey::Bulb.all.update(rgb: hexcolor)
+				Huey::Bulb.all.update(rgb: hexcolor)
 				print hexcolor
 			end
+
 		else
 			puts "Received message: #{msg.strip}"
 
 		end
+
 
 	end
 
