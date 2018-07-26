@@ -67,7 +67,31 @@ EM.run do
 				#puts user_msg
 
 				user_msg_arr.each{ |word|
+					hex_col = ''
+					if(configatron.colors.has_key?(word))
+						#puts "name: #{configatron.colors[word]}"
 
+						hex_col = configatron.colors[word]
+
+					elsif(/#[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]\b/.match?(word))
+						#puts "hex: #{word}"
+
+						hex_col = word
+
+					end
+
+					cheer_col = ColorConverter.rgb(hex_col)
+
+					interp_value = user_bit_amt.to_f / configatron.bitcap.to_f
+					if(interp_value>1.0)
+						interp_value=1.0
+					end
+
+					$red = $red + ((cheer_col[0] - $red).to_f * interp_value).to_i
+					$green = $green + ((cheer_col[1] - $green).to_f * interp_value).to_i
+					$blue = $blue + ((cheer_col[2] - $blue).to_f * interp_value).to_i
+
+					Huey::Bulb.all.update(rgb: ColorConverter.hex($red, $green, $blue))
 
 				}
 
@@ -75,52 +99,6 @@ EM.run do
 			end
 
 
-			if msg.include?('red')
-				redmsg = msg.split(' ')
-				redmsg1 = redmsg[0].split(';').select{ |word|
-					word.include?('bits=')
-				}.to_s
-
-				redmsg2 = redmsg1.delete('\[\]\"').split('=').at(-1).to_i
-				$red = $red + redmsg2
-				$green = $green - redmsg2
-				$blue = $blue - redmsg2
-
-				hexcolor = ColorConverter.hex($red.clamp(0, 255), $green.clamp(0, 255), $blue.clamp(0, 255))
-				#Huey::Bulb.all.update(rgb: hexcolor)
-				print hexcolor
-
-			elsif msg.include?('green')
-				grnmsg = msg.split(' ')
-				grnmsg1 = grnmsg[0].split(';').select{ |word|
-					word.include?('bits=')
-				}.to_s
-
-				grnmsg2 = grnmsg1.delete('\[\]\"').split('=').at(-1).to_i
-				$red = $red + grnmsg2
-				$green = $green - grnmsg2
-				$blue = $blue - grnmsg2
-
-				hexcolor = ColorConverter.hex($red.clamp(0, 255), $green.clamp(0, 255), $blue.clamp(0, 255))
-				#Huey::Bulb.all.update(rgb: hexcolor)
-				print hexcolor
-
-			elsif msg.include?('blue')
-				blumsg = msg.split(' ')
-				blumsg1 = blumsg[0].split(';').select{ |word|
-					word.include?('bits=')
-				}.to_s
-
-				blumsg2 = blumsg1.delete('\[\]\"').split('=').at(-1).to_i
-				$red = $red + blumsg2
-				$green = $green - blumsg2
-				$blue = $blue - blumsg2
-
-
-				hexcolor = ColorConverter.hex($red.clamp(0, 255), $green.clamp(0, 255), $blue.clamp(0, 255))
-				#Huey::Bulb.all.update(rgb: hexcolor)
-				print hexcolor
-			end
 		else
 			puts "Received message: #{msg.strip}"
 
