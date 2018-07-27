@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env ruby2.5
 require 'eventmachine'
 require 'websocket-eventmachine-client'
 require 'huey'
@@ -17,7 +17,9 @@ Huey.configure do |config|
 end
 
 
-bulb = Huey::Bulb.find("3")
+group = Huey::Group.new(Huey::Bulb.find(1), Huey::Bulb.find(2))
+group.name = 'HueFighter'
+group.save
 
 $msg = nil
 
@@ -40,7 +42,7 @@ EM.run do
 
 			ws.send "PONG :tmi.twitch.tv"
 			ws.pong
-		elsif msg.include?('PRIVMSG')
+		elsif msg.include?(' PRIVMSG ')
 			msg = msg.downcase
 			#puts "Received message: #{msg.strip}"
 
@@ -61,12 +63,14 @@ EM.run do
 
 				user_msg_arr[0] = user_msg_arr[0].delete_prefix(':')
 
-				user_msg = user_msg_arr.join(' ')
+				#user_msg = user_msg_arr.join(' ')
+
 
 				#puts user_msg
 
 				user_msg_arr.each{ |word|
 					hex_col = ''
+					#puts word
 					if(configatron.colors.has_key?(word))
 						#puts "name: #{configatron.colors[word]}"
 
@@ -79,24 +83,31 @@ EM.run do
 
 					end
 
-					cheer_col = ColorConverter.rgb(hex_col)
+					if(hex_col!='')
+						cheer_col = ColorConverter.rgb(hex_col)
 
-					interp_value = user_bit_amt.to_f / configatron.bitcap.to_f
-					if(interp_value>1.0)
-						interp_value=1.0
+						interp_value = user_bit_amt.to_f / configatron.bitcap.to_f
+						if(interp_value>1.0)
+							interp_value=1.0
+						end
+
+						$red = $red + ((cheer_col[0] - $red).to_f * interp_value).to_i
+						$green = $green + ((cheer_col[1] - $green).to_f * interp_value).to_i
+						$blue = $blue + ((cheer_col[2] - $blue).to_f * interp_value).to_i
+
+						hex_out = ColorConverter.hex($red, $green, $blue)
+
+						puts "#{user_bit_amt} #{hex_out} \n"
+
+						group.update(rgb: hex_out)
 					end
-
-					$red = $red + ((cheer_col[0] - $red).to_f * interp_value).to_i
-					$green = $green + ((cheer_col[1] - $green).to_f * interp_value).to_i
-					$blue = $blue + ((cheer_col[2] - $blue).to_f * interp_value).to_i
-
-					bulb.update(rgb: ColorConverter.hex($red, $green, $blue))
 
 				}
 
 
 			end
 
+		elsif msg.include?(' JOIN ') || msg.include?(' PART ')
 
 		else
 			puts "Received message: #{msg.strip}"
