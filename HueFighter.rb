@@ -10,14 +10,14 @@ $red = 127
 $green = 127
 $blue = 127
 
-=begin
-Huey.configure do |config|
- config.hue_ip = configatron.bridge
- config.uuid = configatron.user
-end
-=end
 
-#bulb = Huey::Bulb.find("#{rand(1..4)}")
+Huey.configure do |config|
+	config.hue_ip = "192.168.1.172"
+ config.uuid = "ejqXdqMTZB9ixUxNfQb3k2teSQt2FakrcNvyHvGC"
+end
+
+
+bulb = Huey::Bulb.find("3")
 
 $msg = nil
 
@@ -37,7 +37,6 @@ EM.run do
 
 	ws.onmessage do |msg, type|
 		if msg.include?('PING') == true
-			puts "Received message: #{msg.strip}"
 
 			ws.send "PONG :tmi.twitch.tv"
 			ws.pong
@@ -91,7 +90,7 @@ EM.run do
 					$green = $green + ((cheer_col[1] - $green).to_f * interp_value).to_i
 					$blue = $blue + ((cheer_col[2] - $blue).to_f * interp_value).to_i
 
-					Huey::Bulb.all.update(rgb: ColorConverter.hex($red, $green, $blue))
+					bulb.update(rgb: ColorConverter.hex($red, $green, $blue))
 
 				}
 
