@@ -13,7 +13,7 @@ $blue = 127
 
 Huey.configure do |config|
 	config.hue_ip = "192.168.1.172"
- config.uuid = "ejqXdqMTZB9ixUxNfQb3k2teSQt2FakrcNvyHvGC"
+	config.uuid = "ejqXdqMTZB9ixUxNfQb3k2teSQt2FakrcNvyHvGC"
 end
 
 
