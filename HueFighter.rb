@@ -20,6 +20,8 @@ end
 group = Huey::Group.new(Huey::Bulb.find(1), Huey::Bulb.find(2))
 group.name = 'HueFighter'
 group.save
+group.on = true
+group.update(rgb: "#{configatron.basecolor}")
 
 $msg = nil
 
