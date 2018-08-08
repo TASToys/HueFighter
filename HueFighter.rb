@@ -50,6 +50,26 @@ EM.run do
 
 			metadata = msg.split(' ')[0]
 
+			if(metadata.include?('display-name=mediamagnet'))
+				user_msg_arr = msg.split(' ')
+				if user_msg_arr[-1] == '!lightsoff'
+
+					Huey::Bulb.all.update(on: false)
+				elsif user_msg_arr[-1] == '!lightson'
+					Huey::Bulb.all.update(on: true)
+				elsif user_msg_arr[-1] == '!alert'
+					Huey::Bulb.all.alert!
+					sleep 1
+					Huey::Bulb.all.alert!
+					sleep 1
+					Huey::Bulb.all.alert!
+					sleep 1
+					Huey::Bulb.all.alert!
+					sleep 1
+					Huey::Bulb.all.alert!
+					sleep 1
+				end
+			end
 			if(metadata.include?('bits='))
 
 				user_msg_arr = msg.split(' ')
