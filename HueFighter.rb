@@ -36,7 +36,8 @@ EM.run do
 		ws.send "CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership"
 		ws.send "NICK justinfan#{rand(100000..999999)}"
 
-		ws.send "JOIN #dwangoac"
+		ws.send "JOIN ##{configatron.channel}"
+
 	end
 
 	ws.onmessage do |msg, type|
@@ -50,14 +51,13 @@ EM.run do
 
 			metadata = msg.split(' ')[0]
 
-			if(metadata.include?('display-name=mediamagnet'))
+			if(metadata.include?('display-name=mediamagnet;'))
 				user_msg_arr = msg.split(' ')
-				if user_msg_arr[-1] == '!lightsoff'
-
+				if user_msg_arr.to_s.include?('!lightsoff')
 					Huey::Bulb.all.update(on: false)
-				elsif user_msg_arr[-1] == '!lightson'
+				elsif user_msg_arr.to_s.include?('!lightson')
 					Huey::Bulb.all.update(on: true)
-				elsif user_msg_arr[-1] == '!alert'
+				elsif user_msg_arr.to_s.include?('!alert')
 					Huey::Bulb.all.alert!
 					sleep 1
 					Huey::Bulb.all.alert!
