@@ -23,6 +23,7 @@ group.save
 group.on = true
 group.update(rgb: "#{configatron.basecolor}")
 
+
 $msg = nil
 
 def partymode()
@@ -50,8 +51,9 @@ EM.run do
 			#puts "Received message: #{msg.strip}"
 
 			metadata = msg.split(' ')[0]
+			#puts metadata
 
-			if(metadata.include?('display-name=mediamagnet;'))
+			if metadata.include?('badges=broadcaster/1') || metadata.include?('badges=moderator/1;')
 				user_msg_arr = msg.split(' ')
 				if user_msg_arr.to_s.include?('!lightsoff')
 					Huey::Bulb.all.update(on: false)
@@ -68,6 +70,8 @@ EM.run do
 					sleep 1
 					Huey::Bulb.all.alert!
 					sleep 1
+				elsif user_msg_arr.to_s.include('!adminreset')
+					Huey::Bulb.all.update(on: true, rgb: '#ffffff')
 				end
 			end
 			if(metadata.include?('bits='))
