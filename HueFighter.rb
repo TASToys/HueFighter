@@ -53,7 +53,7 @@ EM.run do
 			metadata = msg.split(' ')[0]
 			#puts metadata
 
-			if metadata.include?('badges=broadcaster/1') || metadata.include?('badges=moderator/1;')
+			if metadata.include?('badges=broadcaster/1') || metadata.include?('badges=moderator/1')
 				user_msg_arr = msg.split(' ')
 				if user_msg_arr.to_s.include?('!lightsoff')
 					Huey::Bulb.all.update(on: false)
