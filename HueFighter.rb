@@ -56,10 +56,13 @@ EM.run do
 			if metadata.include?('badges=broadcaster/1') || metadata.include?('badges=moderator/1')
 				user_msg_arr = msg.split(' ')
 				if user_msg_arr.to_s.include?('!lightsoff')
+					puts "HueFighter turned the lights off."
 					Huey::Bulb.all.update(on: false)
 				elsif user_msg_arr.to_s.include?('!lightson')
+					puts "HueFigher turned the lights on."
 					Huey::Bulb.all.update(on: true)
 				elsif user_msg_arr.to_s.include?('!alert')
+					puts "HueFighter sent an alert."
 					Huey::Bulb.all.alert!
 					sleep 1
 					Huey::Bulb.all.alert!
@@ -71,7 +74,8 @@ EM.run do
 					Huey::Bulb.all.alert!
 					sleep 1
 				elsif user_msg_arr.to_s.include('!adminreset')
-					Huey::Bulb.all.update(on: true, rgb: '#ffffff')
+					puts "HueFighter reset everything."
+					Huey::Bulb.all.update(on: true, rgb: configatron.basecolor)
 				end
 			end
 			if(metadata.include?('bits='))
