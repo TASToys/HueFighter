@@ -10,10 +10,10 @@ $red = 127
 $green = 127
 $blue = 127
 
-
+=begin
 Huey.configure do |config|
-	config.hue_ip = configatron.bridge
-	config.uuid = configatron.user
+ config.hue_ip = configatron.bridge
+ config.uuid = configatron.user
 end
 
 
@@ -23,6 +23,7 @@ group.save
 group.on = true
 group.update(rgb: "#{configatron.basecolor}")
 
+=end
 
 $msg = nil
 
@@ -39,6 +40,7 @@ EM.run do
 
 		ws.send "JOIN ##{configatron.channel}"
 
+
 	end
 
 	ws.onmessage do |msg, type|
@@ -47,11 +49,11 @@ EM.run do
 			ws.send "PONG :tmi.twitch.tv"
 			ws.pong
 		elsif msg.include?(' PRIVMSG ')
+			puts msg
 			msg = msg.downcase
 			#puts "Received message: #{msg.strip}"
 
 			metadata = msg.split(' ')[0]
-			#puts metadata
 
 			if metadata.include?('badges=broadcaster/1') || metadata.include?('badges=moderator/1')
 				user_msg_arr = msg.split(' ')
@@ -73,9 +75,14 @@ EM.run do
 					sleep 1
 					Huey::Bulb.all.alert!
 					sleep 1
-				elsif user_msg_arr.to_s.include('!adminreset')
+				elsif user_msg_arr.to_s.include?('!adminreset')
 					puts "HueFighter reset everything."
 					Huey::Bulb.all.update(on: true, rgb: configatron.basecolor)
+
+				elsif user_msg_arr.to_s.include?('!colorforce')
+					color = user_msg_arr.to_s[-1]
+					puts "HueFighter set the group to: #{color}"
+					group.update(rgb: color)
 				end
 			end
 			if(metadata.include?('bits='))
