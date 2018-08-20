@@ -10,7 +10,7 @@ $red = 127
 $green = 127
 $blue = 127
 
-=begin
+
 Huey.configure do |config|
  config.hue_ip = configatron.bridge
  config.uuid = configatron.user
@@ -23,7 +23,7 @@ group.save
 group.on = true
 group.update(rgb: "#{configatron.basecolor}")
 
-=end
+
 
 $msg = nil
 
@@ -49,7 +49,7 @@ EM.run do
 			ws.send "PONG :tmi.twitch.tv"
 			ws.pong
 		elsif msg.include?(' PRIVMSG ')
-			puts msg
+			#puts msg
 			msg = msg.downcase
 			#puts "Received message: #{msg.strip}"
 
@@ -80,7 +80,12 @@ EM.run do
 					Huey::Bulb.all.update(on: true, rgb: configatron.basecolor)
 
 				elsif user_msg_arr.to_s.include?('!colorforce')
-					color = user_msg_arr.to_s[-1]
+
+					user_msg_arr.shift
+					user_msg_arr.shift
+					user_msg_arr.shift
+					user_msg_arr.shift
+					color = user_msg_arr[-1]
 					puts "HueFighter set the group to: #{color}"
 					group.update(rgb: color)
 				end
