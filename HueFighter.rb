@@ -13,8 +13,8 @@ $blue = 127
 
 
 Huey.configure do |config|
- config.hue_ip = configatron.bridge
- config.uuid = configatron.user
+	config.hue_ip = configatron.bridge
+	config.uuid = configatron.user
 end
 
 
@@ -28,26 +28,28 @@ end
 @i = 0
 @r = 0
 $hex_col = nil
-$hex_out
+$hex_out = nil
 $msg = nil
 
 def partymode()
 	loop do
-		break if @i == 60 # Let's leave our loop
+		break if @i == 240 # Let's leave our loop
 		color = SecureRandom.hex(3)
 		puts "Set color to ##{color} on light #{rand(1..4)}"
 		Huey::Bulb.all.update(rgb: "##{color}")
+
 		@i += 1
-		sleep 1
-		
+		sleep 0.25
+
 	end
 end
 
 def resetlights()
 	loop do
 		break if @r == 1
-		puts "Party mode over reseting color to #{$hex_out}"
-		@group.update(rgb: $hex_out)
+		puts "Party mode over reseting color to #{$hex_col}"
+
+		@group.update(rgb: $hex_col)
 		@r += 1
 	end
 end
@@ -88,7 +90,6 @@ EM.run do
 					Huey::Bulb.all.update(on: true)
 				elsif user_msg_arr.to_s.include?('!alert')
 					puts "HueFighter sent an alert."
-=begin
 					Huey::Bulb.all.alert!
 					sleep 1
 					Huey::Bulb.all.alert!
@@ -99,7 +100,6 @@ EM.run do
 					sleep 1
 					Huey::Bulb.all.alert!
 					sleep 1
-=end
 				elsif user_msg_arr.to_s.include?('!adminreset')
 					puts "HueFighter reset everything."
 					Huey::Bulb.all.update(on: true, rgb: configatron.basecolor)
@@ -112,7 +112,8 @@ EM.run do
 					user_msg_arr.shift
 					$hex_col = user_msg_arr[-1]
 					puts "HueFighter set the @group to: #{$hex_col}"
-					#@group.update(rgb: $hex_col)
+
+					@group.update(rgb: $hex_col)
 				elsif user_msg_arr.to_s.include?('!partymode')
 					@i = 0
 					@r = 0
