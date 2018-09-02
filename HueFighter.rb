@@ -28,12 +28,12 @@ end
 @i = 0
 @r = 0
 $hex_col = nil
-$$hex_out
+$hex_out
 $msg = nil
 
 def partymode()
 	loop do
-		break if @i == 5 # Let's leave our loop
+		break if @i == 60 # Let's leave our loop
 		color = SecureRandom.hex(3)
 		puts "Set color to ##{color} on light #{rand(1..4)}"
 		Huey::Bulb.all.update(rgb: "##{color}")
