@@ -18,10 +18,11 @@ Colorful-Cheer is a set of tools to control lights with different cheer events i
 ## Set-up
 1. clone or download this repository
 2. `bundle install`
-3. `cp example.config.rb config.rb`
-4. run `bridge-connect.rb` to connect to your bridge
-5. copy the provided uuid to `config.rb` for `configatron.user`
-6. put the ip of your bridge into `config.rb` for `configatron.bridge`
+3. `cd ./config`
+4. `cp example.config.rb config.rb`
+5. run `bridge-connect.rb` to connect to your bridge
+6. copy the provided uuid to `config.rb` for `configatron.user`
+7. put the ip of your bridge into `config.rb` for `configatron.bridge`
 
 ## Running
 1. run `./HueFighter.rb` if you need to change the lights used for the group that can be done inside the script. (for now.)
