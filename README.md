@@ -32,6 +32,8 @@ Chat commands are usable by moderators and the broadcaster
 - !lightson 	- Turns lights on
 - !alert	- Flash the lights five times once a second
 - !adminreset	- Turns all lights on and resets color back to `configatron.basecolor`
+- !colorforce	- Allows you to set group lights to a color of choice.
+- !partymode	- Changes all lights to random colors for a full minute then changes group colors back to previous state.
 
 
 ##TODO
