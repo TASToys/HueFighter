@@ -31,6 +31,7 @@ end
 @group.on = true
 @group.update(rgb: "#{configatron.basecolor}")
 
+
 #some vars needed inside of party mode
 
 @i = 0
@@ -67,11 +68,17 @@ EM.run do
 	ws = WebSocket::EventMachine::Client.connect(:host => 'irc-ws.chat.twitch.tv', :port => 80, :ssl => false)
 
 	ws.onopen do
-		puts "Connected"
+		puts "connected"
 		ws.send "CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership"
-		ws.send "NICK justinfan#{rand(100000..999999)}"
-
-		ws.send "JOIN ##{configatron.channel}"
+		if configatron.talk == 'enabled'
+			ws.send "PASS #{configatron.oauth}"
+			ws.send "NICK #{configatron.nick}"
+			ws.send "JOIN ##{configatron.channel}"
+			ws.send "PRIVMSG ##{configatron.channel} :HueFighter online, let's do the thing."
+		else
+			ws.send "NICK justinfan#{rand(100000..999999)}"
+			ws.send "JOIN ##{configatron.channel}"
+		end
 
 
 	end
@@ -82,9 +89,7 @@ EM.run do
 			ws.send "PONG :tmi.twitch.tv"
 			ws.pong
 		elsif msg.include?(' PRIVMSG ')
-			#puts msg
 			msg = msg.downcase
-			#puts "Received message: #{msg.strip}"
 
 			metadata = msg.split(' ')[0]
 
@@ -130,6 +135,11 @@ EM.run do
 						resetlights
 					end
 				end
+
+			end
+			
+			if msg.split(' ')[-1].to_s.include?('!getcolor')
+				ws.send "PRIVMSG ##{configatron.channel} :The lights are a nice shade of: #{$hex_col}"
 			end
 			if(metadata.include?('bits='))
 
@@ -193,7 +203,7 @@ EM.run do
 		elsif msg.include?(' JOIN ') || msg.include?(' PART ')
 
 		else
-			puts "Received message: #{msg.strip}"
+			puts msg.strip
 
 		end
 

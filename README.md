@@ -26,15 +26,19 @@ Colorful-Cheer is a set of tools to control lights with different cheer events i
 
 ## Running
 1. run `./HueFighter.rb` if you need to change the lights used for the group that can be done inside the script. (for now.)
+2. If you don't want the bot to talk to chat change `configatron.talk` to `disabled`
 
 ## Chat commands
-Chat commands are usable by moderators and the broadcaster
+These commands are usable by moderators and the broadcaster:
 - !lightsoff 	- Turns lights off 
 - !lightson 	- Turns lights on
 - !alert	- Flash the lights five times once a second
 - !adminreset	- Turns all lights on and resets color back to `configatron.basecolor`
 - !colorforce	- Allows you to set group lights to a color of choice.
 - !partymode	- Changes all lights to random colors for a full minute then changes group colors back to previous state.
+
+These commands are usable by anyone.
+- !getcolor		- Gives you the current hex value of the group.
 
 
 ##TODO
