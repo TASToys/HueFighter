@@ -1,7 +1,10 @@
 configatron.user = 'user id from api'
-configatron.brige = 'ip address of bridge'
+configatron.bridge = 'ip address of bridge'
 configatron.basecolor = '#aaaaaa'
 configatron.bitcap = 100
+configatron.channel = 'mediamagnet'
+configatron.twitch.oauth = 'oauth:jd4071yxvrbub99g1vbqr64138gw78'
+configatron.irc.nick = "TAS9000"
 
 
 configatron.colors = {
@@ -256,9 +259,5 @@ configatron.colors = {
 	'pink' => '#ff81c0', 
 	'blue' => '#0343df', 
 	'green' => '#15b01a', 
-	'purple' => '#7e1e9c', 
-	'TARDIS' => '#003b6F', 
-	'twitch' => '#6441A4', 
-	'TASBot' => '#002AD8', 
-	'nintendo' => '#e4000f'
+	'purple' => '#7e1e9c'
 }

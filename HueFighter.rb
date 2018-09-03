@@ -5,12 +5,19 @@ require 'huey'
 require 'color_converter'
 require 'configatron'
 require 'securerandom'
-require_relative 'config.rb'
+
+#Require our config files.
+
+require_relative './config/config.rb'
+require_relative './config/colors.rb'
+
+#Set default values for lights.
 
 $red = 127
 $green = 127
 $blue = 127
 
+#configure huey, group, and turn on group.
 
 Huey.configure do |config|
  config.hue_ip = configatron.bridge
@@ -24,11 +31,12 @@ end
 @group.on = true
 @group.update(rgb: "#{configatron.basecolor}")
 
+#some vars needed inside of party mode
 
 @i = 0
 @r = 0
 $hex_col = nil
-$hex_out
+$hex_out = nil
 $msg = nil
 
 def partymode()
