@@ -1,6 +1,7 @@
 /emotes/**
 /.c9/**
 /config/config.rb
+/.idea/
 Gemfile.lock
 #vim
 *.swp
