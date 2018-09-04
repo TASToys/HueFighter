@@ -44,8 +44,9 @@ def partymode()
 	loop do
 		break if @i == 240 # Let's leave our loop
 		color = SecureRandom.hex(3)
-		puts "Set color to ##{color} on light #{rand(1..4)} at #{@i}"
-		Huey::Bulb.all.update(rgb: "##{color}")
+		puts "Set color to ##{color} on light"
+		bulb =  Huey::Bulb.find(rand(1..4))
+		bulb.update(rgb: "##{color}")
 
 		@i += 1
 		sleep 0.25
