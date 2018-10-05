@@ -57,9 +57,13 @@ def resetlights()
 	loop do
 		break if @r == 1
 		puts "Party mode over reseting color to #{$hex_col}"
-
-		@group.update(rgb: $hex_col)
-		@r += 1
+		if $hex_col == nil
+			@group.update(rgb: configatron.basecolor)
+			@r += 1
+		else
+			@group.update(rgb: $hex_col)
+			@r += 1
+		end
 	end
 end
 
@@ -75,9 +79,11 @@ EM.run do
 			ws.send "NICK #{configatron.nick}"
 			ws.send "JOIN ##{configatron.channel}"
 			ws.send "PRIVMSG ##{configatron.channel} :HueFighter online, let's do the thing."
+			talking = true
 		else
 			ws.send "NICK justinfan#{rand(100000..999999)}"
 			ws.send "JOIN ##{configatron.channel}"
+			talking = false
 		end
 
 
@@ -124,7 +130,7 @@ EM.run do
 					user_msg_arr.shift
 					user_msg_arr.shift
 					$hex_col = user_msg_arr[-1]
-					puts "HueFighter set the @group to: #{$hex_col}"
+					puts "HueFighter set the group to: #{$hex_col}"
 
 					@group.update(rgb: $hex_col)
 				elsif user_msg_arr.to_s.include?('!partymode')
@@ -139,7 +145,9 @@ EM.run do
 			end
 			
 			if msg.split(' ')[-1].to_s.include?('!getcolor')
-				ws.send "PRIVMSG ##{configatron.channel} :The lights are a nice shade of: #{$hex_col}"
+				if talking == true
+					ws.send "PRIVMSG ##{configatron.channel} :The lights are a nice shade of: #{$hex_col}"
+				end
 			end
 			if(metadata.include?('bits='))
 
