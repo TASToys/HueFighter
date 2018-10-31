@@ -1,4 +1,4 @@
-# Colorful-Cheer
+# HueFighter
 
 [![License](https://img.shields.io/badge/License-BSD%202--Clause-blue.svg?longCache=true&style=flat-square)](https://opensource.org/licenses/BSD-2-Clause)
 
@@ -6,7 +6,7 @@ Colorful-Cheer is a set of tools to control lights with different cheer events i
 
 ---
 
-## Requirements 
+## HueFighter
 - Ruby 2.5.1
 - EventMachine 1.2.7
 - Websocket-Eventmachine-Client v1.2.0
