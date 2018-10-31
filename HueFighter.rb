@@ -18,7 +18,6 @@ $green = 127
 $blue = 127
 
 #configure huey, group, and turn on group.
-=begin
 Huey.configure do |config|
 	config.hue_ip = configatron.bridge
 	config.uuid = configatron.user
@@ -30,7 +29,6 @@ end
 @group.save
 @group.on = true
 @group.update(rgb: "#{configatron.basecolor}")
-=end
 
 #some vars needed inside of party mode
 
