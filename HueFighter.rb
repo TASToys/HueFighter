@@ -18,7 +18,7 @@ $green = 127
 $blue = 127
 
 #configure huey, group, and turn on group.
-
+=begin
 Huey.configure do |config|
 	config.hue_ip = configatron.bridge
 	config.uuid = configatron.user
@@ -30,7 +30,7 @@ end
 @group.save
 @group.on = true
 @group.update(rgb: "#{configatron.basecolor}")
-
+=end
 
 #some vars needed inside of party mode
 
@@ -79,11 +79,11 @@ EM.run do
 			ws.send "NICK #{configatron.nick}"
 			ws.send "JOIN ##{configatron.channel}"
 			ws.send "PRIVMSG ##{configatron.channel} :HueFighter online, let's do the thing."
-			talking = true
+			@talking = true
 		else
 			ws.send "NICK justinfan#{rand(100000..999999)}"
 			ws.send "JOIN ##{configatron.channel}"
-			talking = false
+			@talking = false
 		end
 
 
@@ -145,8 +145,12 @@ EM.run do
 			end
 			
 			if msg.split(' ')[-1].to_s.include?('!getcolor')
-				if talking == true
-					ws.send "PRIVMSG ##{configatron.channel} :The lights are a nice shade of: #{$hex_col}"
+				if @talking == true
+					if $hex_col == nil
+						ws.send "PRIVMSG ##{configatron.channel} :The lights are still set to default, cheer any amount and any hex value and I'll change it."
+					else
+						ws.send "PRIVMSG ##{configatron.channel} :The lights are a nice shade of: #{$hex_col}"
+					end
 				end
 			end
 			if(metadata.include?('bits='))
