@@ -13,9 +13,9 @@ require_relative './config/colors.rb'
 
 #Set default values for lights.
 
-$red = 127
-$green = 127
-$blue = 127
+@red = 127
+@green = 127
+@blue = 127
 
 #configure huey, group, and turn on group.
 Huey.configure do |config|
@@ -34,8 +34,8 @@ end
 
 @i = 0
 @r = 0
-$hex_col = nil
-$hex_out = nil
+@hex_col = nil
+@hex_out = nil
 $msg = nil
 
 def partymode()
@@ -54,12 +54,12 @@ end
 def resetlights()
 	loop do
 		break if @r == 1
-		puts "Party mode over reseting color to #{$hex_col}"
-		if $hex_col == nil
+		puts "Party mode over reseting color to #{@hex_col}"
+		if @hex_col == nil
 			@group.update(rgb: configatron.basecolor)
 			@r += 1
 		else
-			@group.update(rgb: $hex_col)
+			@group.update(rgb: @hex_col)
 			@r += 1
 		end
 	end
@@ -127,10 +127,10 @@ EM.run do
 					user_msg_arr.shift
 					user_msg_arr.shift
 					user_msg_arr.shift
-					$hex_col = user_msg_arr[-1]
-					puts "HueFighter set the group to: #{$hex_col}"
+					@hex_col = user_msg_arr[-1]
+					puts "HueFighter set the group to: #{@hex_col}"
 
-					@group.update(rgb: $hex_col)
+					@group.update(rgb: @hex_col)
 				elsif user_msg_arr.to_s.include?('!partymode')
 					@i = 0
 					@r = 0
@@ -144,10 +144,10 @@ EM.run do
 			
 			if msg.split(' ')[-1].to_s.include?('!getcolor')
 				if @talking == true
-					if $hex_col == nil
+					if @hex_col == nil
 						ws.send "PRIVMSG ##{configatron.channel} :The lights are still set to default, cheer any amount and any hex value and I'll change it."
 					else
-						ws.send "PRIVMSG ##{configatron.channel} :The lights are a nice shade of: #{$hex_col}"
+						ws.send "PRIVMSG ##{configatron.channel} :The lights are a nice shade of: #{@hex_col}"
 					end
 				end
 			end
@@ -172,37 +172,37 @@ EM.run do
 				#puts user_msg
 
 				user_msg_arr.each{ |word|
-					$hex_col = ''
+					@hex_col = ''
 					#puts word
 					if(configatron.colors.has_key?(word))
 						#puts "name: #{configatron.colors[word]}"
 
-						$hex_col = configatron.colors[word]
+						@hex_col = configatron.colors[word]
 
 					elsif(/#[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]\b/.match?(word))
 						#puts "hex: #{word}"
 
-						$hex_col = word
+						@hex_col = word
 
 					end
 
-					if($hex_col!='')
-						cheer_col = ColorConverter.rgb($hex_col)
+					if(@hex_col!='')
+						cheer_col = ColorConverter.rgb(@hex_col)
 
 						interp_value = user_bit_amt.to_f / configatron.bitcap.to_f
 						if(interp_value>1.0)
 							interp_value=1.0
 						end
 
-						$red = $red + ((cheer_col[0] - $red).to_f * interp_value).to_i
-						$green = $green + ((cheer_col[1] - $green).to_f * interp_value).to_i
-						$blue = $blue + ((cheer_col[2] - $blue).to_f * interp_value).to_i
+						@red = @red + ((cheer_col[0] - @red).to_f * interp_value).to_i
+						@green = @green + ((cheer_col[1] - @green).to_f * interp_value).to_i
+						@blue = @blue + ((cheer_col[2] - @blue).to_f * interp_value).to_i
 
-						$hex_out = ColorConverter.hex($red, $green, $blue)
+						@hex_out = ColorConverter.hex(@red, @green, @blue)
 
-						puts "#{user_bit_amt} #{$hex_out} \n"
+						puts "#{user_bit_amt} #{@hex_out} \n"
 
-						@group.update(rgb: $hex_out)
+						@group.update(rgb: @hex_out)
 					end
 
 				}
