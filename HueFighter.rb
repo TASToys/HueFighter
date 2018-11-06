@@ -7,6 +7,7 @@ require 'huey'
 require 'color_converter'
 require 'configatron'
 require 'securerandom'
+require 'paint'
 
 # Some rubocop settings to ingore things.
 # rubocop:disable Metrics/BlockLength, Metrics/LineLength, Style/BlockDelimiters
@@ -33,7 +34,6 @@ end
 @group.save
 @group.on = true
 @group.update(rgb: configatron.basecolor)
-
 # some vars needed inside of party mode
 
 @i = 0
@@ -47,9 +47,11 @@ def partymode
     break if @i == 240 # Let's leave our loop
 
     color = SecureRandom.hex(3)
-    puts "Set color to ##{color} on light"
-    bulb = Huey::Bulb.find(rand(1..4))
-    bulb.update(rgb: "##{color}")
+    # puts "Set color to ##{color} on light"
+    text = Paint["Set color to ##{color} on light", color]
+    puts text + "\n"
+    # bulb = Huey::Bulb.find(rand(1..4))
+    # bulb.update(rgb: "##{color}")
 
     @i += 1
     sleep 0.25
@@ -62,9 +64,9 @@ def resetlights
 
     puts "Party mode over reseting color to #{@hex_col}"
     if @hex_col.nil?
-      @group.update(rgb: configatron.basecolor)
+    #  @group.update(rgb: configatron.basecolor)
     else
-      @group.update(rgb: @hex_col)
+    #  @group.update(rgb: @hex_col)
     end
     @r += 1
   end
