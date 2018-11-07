@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/License-BSD%202--Clause-blue.svg?longCache=true&style=flat-square)](https://opensource.org/licenses/BSD-2-Clause)
 
-Colorful-Cheer is a set of tools to control lights with different cheer events in a Twitch chat
+HueFighter is a set of tools to control lights with different cheer events in a Twitch chat
 
 ---
 
@@ -13,7 +13,8 @@ Colorful-Cheer is a set of tools to control lights with different cheer events i
 - Huey v2.1.0
 - Color-Converter 1.0.0
 - tty-prompt 0.16.1
-- rest-client 2.0.2 
+- rest-client 2.0.2
+- Paint 2.0.1
 
 ## Set-up
 1. clone or download this repository
