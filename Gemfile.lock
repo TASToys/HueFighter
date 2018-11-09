@@ -3,8 +3,14 @@ GEM
   specs:
     chronic (0.10.2)
     color (1.8)
+    color-converter (1.0.0)
     configatron (4.5.1)
+    domain_name (0.5.20180417)
+      unf (>= 0.0.5, < 1.0.0)
+    equatable (0.5.0)
     eventmachine (1.2.7)
+    http-cookie (1.0.3)
+      domain_name (~> 0.5)
     httparty (0.16.2)
       multi_xml (>= 0.5.2)
     huey (2.1.0)
@@ -13,8 +19,38 @@ GEM
       eventmachine (>= 1.0.0)
       httparty (>= 0.9.0)
       multi_json (~> 1.8)
+    mime-types (3.2.2)
+      mime-types-data (~> 3.2015)
+    mime-types-data (3.2018.0812)
     multi_json (1.13.1)
     multi_xml (0.6.0)
+    necromancer (0.4.0)
+    netrc (0.11.0)
+    paint (2.0.1)
+    pastel (0.7.2)
+      equatable (~> 0.5.0)
+      tty-color (~> 0.4.0)
+    rest-client (2.0.2)
+      http-cookie (>= 1.0.2, < 2.0)
+      mime-types (>= 1.16, < 4.0)
+      netrc (~> 0.8)
+    timers (4.2.0)
+    tty-color (0.4.3)
+    tty-cursor (0.6.0)
+    tty-prompt (0.17.2)
+      necromancer (~> 0.4.0)
+      pastel (~> 0.7.0)
+      timers (~> 4.0)
+      tty-cursor (~> 0.6.0)
+      tty-reader (~> 0.4.0)
+    tty-reader (0.4.0)
+      tty-cursor (~> 0.6.0)
+      tty-screen (~> 0.6.4)
+      wisper (~> 2.0.0)
+    tty-screen (0.6.5)
+    unf (0.1.4)
+      unf_ext
+    unf_ext (0.0.7.5)
     websocket (1.2.8)
     websocket-eventmachine-base (1.2.0)
       eventmachine (~> 1.0)
@@ -23,14 +59,19 @@ GEM
     websocket-eventmachine-client (1.2.0)
       websocket-eventmachine-base (~> 1.0)
     websocket-native (1.0.0)
+    wisper (2.0.0)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  color-converter
   configatron
   eventmachine
   huey
+  paint
+  rest-client
+  tty-prompt
   websocket-eventmachine-client
 
 RUBY VERSION
