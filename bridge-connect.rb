@@ -5,12 +5,15 @@ require 'configatron'
 require 'rest-client'
 require 'tty-prompt'
 require 'json'
+require 'huey'
 require_relative 'config/config.rb'
 
 # rubocop:disable Metrics/LineLength, Style/BracesAroundHashParameters
+@i = 0
 
 prompt = TTY::Prompt.new
 
+=begin
 name = prompt.ask('What would you like the app to be called on your Hue bridge?') do |q|
   q.required true
   q.default 'HueFighter'
@@ -26,8 +29,37 @@ if body.fetch('error').fetch('description')
   puts body.fetch('error').fetch('description')
 elsif body.fetch('success').fetch('username')
   puts 'Please add this username to your config.rb file'
-  puts body.fetch('success').fetch('username')
+  lightuser = body.fetch('success').fetch('username')
+  puts lightuser
 
 end
+=end
+
+Huey.configure do |config|
+  config.hue_ip = configatron.bridge
+  config.uuid = configatron.user
+end
+
+@lightarray = Array.new
+getlight = Huey::Bulb.all
+
+loop do
+  name = getlight.to_a.at(@i).name
+  @i += 1
+  groupl = prompt.yes?("Would you like me to add #{name} to the configatron group?", default: 'no')
+  if groupl
+    @lightarray << name
+  elsif !groupl
+    puts @lightarray
+  end
+  if @i == getlight.to_a.count
+    open( 'config/config.rb', 'a' ) do |f|
+      f.puts "configatron.lightarry = #{@lightarray}"
+    end
+    break
+
+  end
+end
+
 
 # rubocop:enable Metrics/LineLength, Style/BracesAroundHashParameters
