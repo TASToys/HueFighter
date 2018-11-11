@@ -41,25 +41,27 @@ Huey.configure do |config|
 end
 
 @lightarray = Array.new
+@groupl = Array.new
 getlight = Huey::Bulb.all
 
 loop do
   name = getlight.to_a.at(@i).name
   @i += 1
-  groupl = prompt.yes?("Would you like me to add #{name} to the configatron group?", default: 'no')
-  if groupl
-    @lightarray << name
-  elsif !groupl
-    puts @lightarray
-  end
-  if @i == getlight.to_a.count
-    open( 'config/config.rb', 'a' ) do |f|
-      f.puts "configatron.lightarry = #{@lightarray}"
-    end
+  @lightarray << name
+  if @i == getlight.to_a.size
     break
 
   end
 end
 
+puts @lightarray
+choices = @lightarray
+
+@groupl = prompt.multi_select('Which Lights would you like me to add to the group?', choices)
+
+open('config/config.rb', 'a') do |f|
+  f.puts "configatron.lightarray = #{@groupl}"
+  f.close
+end
 
 # rubocop:enable Metrics/LineLength, Style/BracesAroundHashParameters
