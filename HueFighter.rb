@@ -96,7 +96,7 @@ EM.run do
   end
 
   ws.onmessage do |msg|
-    # puts msg
+    puts msg
     if msg.include?('PING') == true
       ws.send 'PONG :tmi.twitch.tv'
       ws.pong
@@ -105,13 +105,13 @@ EM.run do
       metadata = msg.split(' ')[0]
       if metadata.include?('badges=broadcaster/1') || metadata.include?('badges=moderator/1') || metadata.include?('badges=vip/1')
         user_msg_arr = msg.split(' ')
-        if user_msg_arr.to_s.include?('!lightsoff')
+        if user_msg_arr[4..-1].at(0).include?('!lightsoff')
           puts 'HueFighter turned the lights off.'
           Huey::Bulb.all.update(on: false)
-        elsif user_msg_arr.to_s.include?('!lightson')
+        elsif user_msg_arr[4..-1].at(0).include?('!lightson')
           puts 'HueFigher turned the lights on.'
           Huey::Bulb.all.update(on: true)
-        elsif user_msg_arr.to_s.include?('!alert')
+        elsif user_msg_arr[4..-1].at(0).include?('!alert')
           puts 'HueFighter sent an alert.'
           Huey::Bulb.all.alert!
           sleep 1
@@ -123,10 +123,10 @@ EM.run do
           sleep 1
           Huey::Bulb.all.alert!
           sleep 1
-        elsif user_msg_arr.to_s.include?('!adminreset')
+        elsif user_msg_arr[4..-1].at(0).include?('!adminreset')
           puts 'HueFighter reset everything.'
           Huey::Bulb.all.update(on: true, rgb: configatron.basecolor)
-        elsif user_msg_arr.to_s.include?('!colorforce')
+        elsif user_msg_arr[4..-1].at(0).include?('!colorforce')
           user_msg_arr.shift
           user_msg_arr.shift
           user_msg_arr.shift
@@ -135,7 +135,7 @@ EM.run do
           puts "HueFighter set the group to: #{@hex_col}"
 
           @group.update(rgb: @hex_col)
-        elsif user_msg_arr.to_s.include?('!partymode')
+        elsif user_msg_arr[4..-1].at(0).include?('!partymode')
           @i = 0
           @r = 0
           EM.tick_loop do
