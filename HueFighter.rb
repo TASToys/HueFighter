@@ -31,8 +31,8 @@ end
 
 @group = Huey::Group.new(Huey::Bulb.find(1), Huey::Bulb.find(2))
 @group.name = 'HueFighter'
-@group.save
 @group.on = true
+@group.save
 @group.update(rgb: configatron.basecolor)
 # some vars needed inside of party mode
 
@@ -44,14 +44,15 @@ end
 
 def partymode
   loop do
-    break if @i == 240 # Let's leave our loop
+    break if @i == 250 # Let's leave our loop
 
     color = SecureRandom.hex(3)
     # puts "Set color to ##{color} on light"
-    text = Paint["Set color to ##{color} on light", color]
+    bulb = Huey::Bulb.find([3,9].sample)
+    text = Paint["Set color to ##{color} on light #{bulb.name}", color]
 
     puts text + "\n"
-    bulb = Huey::Bulb.find(rand(1..4))
+
     bulb.update(rgb: "##{color}")
 
     @i += 1
@@ -81,8 +82,8 @@ EM.run do
     puts 'connected'
     ws.send 'CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership'
     if configatron.talk == 'enabled'
-      ws.send "PASS #{configatron.oauth}"
-      ws.send "NICK #{configatron.nick}"
+      ws.send "PASS #{configatron.twitch.oauth}"
+      ws.send "NICK #{configatron.irc.nick}"
       ws.send "JOIN ##{configatron.channel}"
       ws.send "PRIVMSG ##{configatron.channel} :HueFighter online, let's do the thing."
 
@@ -105,27 +106,23 @@ EM.run do
       metadata = msg.split(' ')[0]
       if metadata.include?('badges=broadcaster/1') || metadata.include?('badges=moderator/1') || metadata.include?('badges=vip/1')
         user_msg_arr = msg.split(' ')
+
         if user_msg_arr[4..-1].at(0).include?('!lightsoff')
           puts 'HueFighter turned the lights off.'
           Huey::Bulb.all.update(on: false)
+
         elsif user_msg_arr[4..-1].at(0).include?('!lightson')
           puts 'HueFigher turned the lights on.'
           Huey::Bulb.all.update(on: true)
+
         elsif user_msg_arr[4..-1].at(0).include?('!alert')
           puts 'HueFighter sent an alert.'
-          Huey::Bulb.all.alert!
-          sleep 1
-          Huey::Bulb.all.alert!
-          sleep 1
-          Huey::Bulb.all.alert!
-          sleep 1
-          Huey::Bulb.all.alert!
-          sleep 1
-          Huey::Bulb.all.alert!
-          sleep 1
+          5.times { Huey::Bulb.all.alert!; sleep 1 }
+
         elsif user_msg_arr[4..-1].at(0).include?('!adminreset')
           puts 'HueFighter reset everything.'
           Huey::Bulb.all.update(on: true, rgb: configatron.basecolor)
+
         elsif user_msg_arr[4..-1].at(0).include?('!colorforce')
           user_msg_arr.shift
           user_msg_arr.shift
