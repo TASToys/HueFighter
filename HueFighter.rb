@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby2.5
+#!/usr/bin/env ruby2.6
 # frozen_string_literal: true
 
 require 'eventmachine'
@@ -29,11 +29,14 @@ Huey.configure do |config|
   config.uuid = configatron.user
 end
 
+=begin
 @group = Huey::Group.new(Huey::Bulb.find(1), Huey::Bulb.find(2))
 @group.name = 'HueFighter'
 @group.on = true
 @group.save
 @group.update(rgb: configatron.basecolor)
+=end
+
 # some vars needed inside of party mode
 
 @i = 0
@@ -41,37 +44,42 @@ end
 @hex_col = nil
 @hex_out = nil
 @msg = nil
+debugging = false
 
-def partymode
+def partymode(ltotal)
   loop do
-    break if @i == 250 # Let's leave our loop
-
+    break if @i == ltotal + 1 # Let's leave our loop
     color = SecureRandom.hex(3)
     # puts "Set color to ##{color} on light"
-    bulb = Huey::Bulb.find([3,9].sample)
-    text = Paint["Set color to ##{color} on light #{bulb.name}", color]
-
+    # bulb = Huey::Bulb.find([3,9].sample)
+    text = Paint["Set color to ##{color} on light bulb.name", color]
     puts text + "\n"
-
-    bulb.update(rgb: "##{color}")
-
+    # bulb.update(rgb: "##{color}")
     @i += 1
     sleep 0.25
+  end
+  puts "partymode over resetting lights"
+  loop do
+    break if @r == 1
+    if @hex_col.nil?
+      # @group.update(rgb: configatron.basecolor)
+    else
+      # @group.update(rgb: @hex_col)
+    end
+  @r += 1
   end
 end
 
 def resetlights
+  puts "partymode over resetting lights"
   loop do
     break if @r == 1
-
-    puts "Party mode over reseting color to #{@hex_col}"
-
     if @hex_col.nil?
-      @group.update(rgb: configatron.basecolor)
+      # @group.update(rgb: configatron.basecolor)
     else
-      @group.update(rgb: @hex_col)
+      # @group.update(rgb: @hex_col)
     end
-    @r += 1
+  @r += 1
   end
 end
 
@@ -82,7 +90,7 @@ EM.run do
     puts 'connected'
     ws.send 'CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership'
     if configatron.talk == 'enabled'
-      ws.send "PASS #{configatron.twitch.oauth}"
+      ws.send "PASS #{configatron.oauth}"
       ws.send "NICK #{configatron.irc.nick}"
       ws.send "JOIN ##{configatron.channel}"
       ws.send "PRIVMSG ##{configatron.channel} :HueFighter online, let's do the thing."
@@ -107,48 +115,46 @@ EM.run do
       if metadata.include?('badges=broadcaster/1') || metadata.include?('badges=moderator/1') || metadata.include?('badges=vip/1')
         user_msg_arr = msg.split(' ')
 
-        if user_msg_arr[4..-1].at(0).include?('!lightsoff')
-          puts 'HueFighter turned the lights off.'
-          Huey::Bulb.all.update(on: false)
 
-        elsif user_msg_arr[4..-1].at(0).include?('!lightson')
-          puts 'HueFigher turned the lights on.'
-          Huey::Bulb.all.update(on: true)
+        case
+          when user_msg_arr[4..-1].at(0).include?('!lightsoff')
+            puts 'HueFighter turned the lights off.'
+            Huey::Bulb.all.update(on: false)
 
-        elsif user_msg_arr[4..-1].at(0).include?('!alert')
-          puts 'HueFighter sent an alert.'
-          5.times { Huey::Bulb.all.alert!; sleep 1 }
+          when user_msg_arr[4..-1].at(0).include?('!lightson')
+            puts 'HueFigher turned the lights on.'
+            Huey::Bulb.all.update(on: true)
 
-        elsif user_msg_arr[4..-1].at(0).include?('!adminreset')
-          puts 'HueFighter reset everything.'
-          Huey::Bulb.all.update(on: true, rgb: configatron.basecolor)
+          when user_msg_arr[4..-1].at(0).include?('!alert')
+            puts 'HueFighter sent an alert.'
+            5.times { Huey::Bulb.all.alert!; sleep 1 }
 
-        elsif user_msg_arr[4..-1].at(0).include?('!colorforce')
-          user_msg_arr.shift
-          user_msg_arr.shift
-          user_msg_arr.shift
-          user_msg_arr.shift
-          @hex_col = user_msg_arr[-1]
-          puts "HueFighter set the group to: #{@hex_col}"
+          when user_msg_arr[4..-1].at(0).include?('!adminreset')
+            puts 'HueFighter reset everything.'
+            Huey::Bulb.all.update(on: true, rgb: configatron.basecolor)
 
-          @group.update(rgb: @hex_col)
-        elsif user_msg_arr[4..-1].at(0).include?('!partymode')
-          @i = 0
-          @r = 0
-          EM.tick_loop do
-            partymode
-            resetlights
-          end
+          when user_msg_arr[4..-1].at(0).include?('!colorforce')
+            user_msg_arr.shift
+            user_msg_arr.shift
+            user_msg_arr.shift
+            user_msg_arr.shift
+            @hex_col = user_msg_arr[-1]
+            puts "HueFighter set the group to: #{@hex_col}"
+
+            @group.update(rgb: @hex_col)
+
+          when user_msg_arr[4..-1].at(0).include?('!partymode')
+            @i = 0
+            @r = 0
+            partymode(3)
         end
       end
       if msg.split(' ')[-1].to_s.include?('!getcolor')
         if @talking == true
           if @hex_col.nil?
             ws.send "PRIVMSG ##{configatron.channel} :The lights are still set to default, cheer any amount and any hex value and I'll change it."
-
           else
             ws.send "PRIVMSG ##{configatron.channel} :The lights are a nice shade of: #{@hex_col}"
-
           end
         end
       end
@@ -168,11 +174,9 @@ EM.run do
           # puts word
           if configatron.colors.key?(word)
             # puts "name: #{configatron.colors[word]}"
-
             @hex_col = configatron.colors[word]
           elsif /#[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]\b/.match?(word)
             # puts "hex: #{word}"
-
             @hex_col = word
           end
           if @hex_col != ''
@@ -209,5 +213,7 @@ EM.run do
     puts 'tick!'
   end
 end
+
+
 # rubocop:enable Metrics/BlockLength, Metrics/LineLength, Style/BlockDelimiters
 # rubocop:enable Style/IfUnlessModifier, Style/Next, Metrics/BlockNesting
