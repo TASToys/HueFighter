@@ -51,9 +51,8 @@ def partymode(ltotal)
     break if @i == ltotal + 1 # Let's leave our loop
 
     color = SecureRandom.hex(3)
-    puts "Set color to ##{color} on light"
-    bulb = Huey::Bulb.find([3, 9].sample)
-    text = Paint["Set color to ##{color} on light bulb.name", color]
+    bulb = Huey::Bulb.find([0, 4].sample)
+    text = Paint["Set color to #{color} on light #{bulb.name}", color]
     puts text + "\n"
     bulb.update(rgb: "##{color}")
     @i += 1
@@ -63,11 +62,7 @@ def partymode(ltotal)
   loop do
     break if @r == 1
 
-    if @hex_col.nil?
-      @group.update(rgb: configatron.basecolor)
-    else
-      @group.update(rgb: @hex_col)
-    end
+    @group.update(rgb: configatron.basecolor)
     @r += 1
   end
 end
@@ -82,7 +77,7 @@ EM.run do
       ws.send "PASS #{configatron.oauth}"
       ws.send "NICK #{configatron.irc.nick}"
       ws.send "JOIN ##{configatron.channel}"
-      ws.send "PRIVMSG ##{configatron.channel} :HueFighter online, let's do the thing."
+      # ws.send "PRIVMSG ##{configatron.channel} :HueFighter online, let's do the thing."
 
       @talking = true
     else
@@ -135,7 +130,7 @@ EM.run do
         when user_msg_arr[4..-1].at(0).include?('!partymode')
           @i = 0
           @r = 0
-          partymode(3)
+          partymode(250)
         end
       end
 
@@ -185,8 +180,36 @@ EM.run do
           end
         }
       end
+
+      if metadata.include?('bits=')
+        bitamt = metadata.split(';').grep(/bits=/)[0].split('=')[-1].to_i
+        puts bitamt.class
+        if bitamt > 1000
+          partymode(1000)
+        elsif bitamt >= 500
+          partymode(100)
+        elsif bitamt >= 400
+          partymode(40)
+        elsif bitamt >= 300
+          partymode(30)
+        elsif bitamt >= 200
+          partymode(20)
+        elsif bitamt >= 100
+          partymode(10)
+        elsif bitamt >= 1
+          partymode(5)
+        end
+      end
+
       if metadata.include?('color=')
-        puts metadata.split(';')
+        color = metadata.split(';').grep(/color=/)[0].split('=')[-1]
+        if color == "color"
+          color = SecureRandom.hex(3)
+        end
+        bulb = Huey::Bulb.find([0, 4].sample)
+        text = Paint["Set color to #{color} on light #{bulb.name}", color]
+        puts text + "\n"
+        bulb.update(rgb: color)
       end
     elsif msg.include?(' JOIN ') || msg.include?(' PART ')
     else

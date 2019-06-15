@@ -46,6 +46,8 @@ end
 @groupl = Array.new
 getlight = Huey::Bulb.all
 
+
+puts 'Here are all the lights on your network:'
 loop do
   name = getlight.to_a.at(@i).name
   @i += 1
