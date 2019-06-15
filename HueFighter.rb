@@ -12,6 +12,7 @@ require 'paint'
 # Some rubocop settings to ingore things.
 # rubocop:disable Metrics/BlockLength, Metrics/LineLength, Style/BlockDelimiters
 # rubocop:disable Style/IfUnlessModifier, Style/Next, Metrics/BlockNesting
+# rubocop:disable Metrics/MethodLength
 # Require our config files.
 
 require_relative './config/config.rb'
@@ -29,13 +30,12 @@ Huey.configure do |config|
   config.uuid = configatron.user
 end
 
-=begin
-@group = Huey::Group.new(Huey::Bulb.find(1), Huey::Bulb.find(2))
+@group = Huey::Group.new(configatron.lightarray)
 @group.name = 'HueFighter'
 @group.on = true
 @group.save
 @group.update(rgb: configatron.basecolor)
-=end
+
 
 # some vars needed inside of party mode
 
@@ -49,37 +49,26 @@ debugging = false
 def partymode(ltotal)
   loop do
     break if @i == ltotal + 1 # Let's leave our loop
+
     color = SecureRandom.hex(3)
-    # puts "Set color to ##{color} on light"
-    # bulb = Huey::Bulb.find([3,9].sample)
+    puts "Set color to ##{color} on light"
+    bulb = Huey::Bulb.find([3, 9].sample)
     text = Paint["Set color to ##{color} on light bulb.name", color]
     puts text + "\n"
-    # bulb.update(rgb: "##{color}")
+    bulb.update(rgb: "##{color}")
     @i += 1
     sleep 0.25
   end
-  puts "partymode over resetting lights"
+  puts 'partymode over resetting lights'
   loop do
     break if @r == 1
-    if @hex_col.nil?
-      # @group.update(rgb: configatron.basecolor)
-    else
-      # @group.update(rgb: @hex_col)
-    end
-  @r += 1
-  end
-end
 
-def resetlights
-  puts "partymode over resetting lights"
-  loop do
-    break if @r == 1
     if @hex_col.nil?
-      # @group.update(rgb: configatron.basecolor)
+      @group.update(rgb: configatron.basecolor)
     else
-      # @group.update(rgb: @hex_col)
+      @group.update(rgb: @hex_col)
     end
-  @r += 1
+    @r += 1
   end
 end
 
@@ -117,38 +106,39 @@ EM.run do
 
 
         case
-          when user_msg_arr[4..-1].at(0).include?('!lightsoff')
-            puts 'HueFighter turned the lights off.'
-            Huey::Bulb.all.update(on: false)
+        when user_msg_arr[4..-1].at(0).include?('!lightsoff')
+          puts 'HueFighter turned the lights off.'
+          Huey::Bulb.all.update(on: false)
 
-          when user_msg_arr[4..-1].at(0).include?('!lightson')
-            puts 'HueFigher turned the lights on.'
-            Huey::Bulb.all.update(on: true)
+        when user_msg_arr[4..-1].at(0).include?('!lightson')
+          puts 'HueFigher turned the lights on.'
+          Huey::Bulb.all.update(on: true)
 
-          when user_msg_arr[4..-1].at(0).include?('!alert')
-            puts 'HueFighter sent an alert.'
-            5.times { Huey::Bulb.all.alert!; sleep 1 }
+        when user_msg_arr[4..-1].at(0).include?('!alert')
+          puts 'HueFighter sent an alert.'
+          5.times { Huey::Bulb.all.alert!; sleep 1 }
 
-          when user_msg_arr[4..-1].at(0).include?('!adminreset')
-            puts 'HueFighter reset everything.'
-            Huey::Bulb.all.update(on: true, rgb: configatron.basecolor)
+        when user_msg_arr[4..-1].at(0).include?('!adminreset')
+          puts 'HueFighter reset everything.'
+          Huey::Bulb.all.update(on: true, rgb: configatron.basecolor)
 
-          when user_msg_arr[4..-1].at(0).include?('!colorforce')
-            user_msg_arr.shift
-            user_msg_arr.shift
-            user_msg_arr.shift
-            user_msg_arr.shift
-            @hex_col = user_msg_arr[-1]
-            puts "HueFighter set the group to: #{@hex_col}"
+        when user_msg_arr[4..-1].at(0).include?('!colorforce')
+          user_msg_arr.shift
+          user_msg_arr.shift
+          user_msg_arr.shift
+          user_msg_arr.shift
+          @hex_col = user_msg_arr[-1]
+          puts "HueFighter set the group to: #{@hex_col}"
 
-            @group.update(rgb: @hex_col)
+          @group.update(rgb: @hex_col)
 
-          when user_msg_arr[4..-1].at(0).include?('!partymode')
-            @i = 0
-            @r = 0
-            partymode(3)
+        when user_msg_arr[4..-1].at(0).include?('!partymode')
+          @i = 0
+          @r = 0
+          partymode(3)
         end
       end
+
       if msg.split(' ')[-1].to_s.include?('!getcolor')
         if @talking == true
           if @hex_col.nil?
@@ -194,7 +184,9 @@ EM.run do
             @group.update(rgb: @hex_out)
           end
         }
-
+      end
+      if metadata.include?('color=')
+        puts metadata.split(';')
       end
     elsif msg.include?(' JOIN ') || msg.include?(' PART ')
     else
@@ -203,17 +195,15 @@ EM.run do
   end
   ws.onclose do |code, reason|
     puts "Disconnected with status code: #{code} #{reason}"
-
   end
   ws.onerror do |error|
     puts "Error: #{error}"
-
   end
   EventMachine.next_tick do
     puts 'tick!'
   end
 end
 
-
 # rubocop:enable Metrics/BlockLength, Metrics/LineLength, Style/BlockDelimiters
 # rubocop:enable Style/IfUnlessModifier, Style/Next, Metrics/BlockNesting
+# rubocop:enable Metrics/MethodLength
