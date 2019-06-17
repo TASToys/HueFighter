@@ -46,12 +46,13 @@ end
 @msg = nil
 debugging = false
 
+# Partymode randoms lights for set number of quarter seconds
 def partymode(ltotal)
   loop do
     break if @i == ltotal + 1 # Let's leave our loop
 
     color = SecureRandom.hex(3)
-    bulb = Huey::Bulb.find([0, 4].sample)
+    bulb = Huey::Bulb.find(rand(1..4))
     text = Paint["Set color to #{color} on light #{bulb.name}", color]
     puts text + "\n"
     bulb.update(rgb: "##{color}")
@@ -77,7 +78,7 @@ EM.run do
       ws.send "PASS #{configatron.oauth}"
       ws.send "NICK #{configatron.irc.nick}"
       ws.send "JOIN ##{configatron.channel}"
-      # ws.send "PRIVMSG ##{configatron.channel} :HueFighter online, let's do the thing."
+      ws.send "PRIVMSG ##{configatron.channel} :HueFighter online, let's do the thing."
 
       @talking = true
     else
@@ -89,7 +90,9 @@ EM.run do
   end
 
   ws.onmessage do |msg|
-    puts msg
+    if debugging == true
+      puts msg
+    end
     if msg.include?('PING') == true
       ws.send 'PONG :tmi.twitch.tv'
       ws.pong
@@ -98,7 +101,6 @@ EM.run do
       metadata = msg.split(' ')[0]
       if metadata.include?('badges=broadcaster/1') || metadata.include?('badges=moderator/1') || metadata.include?('badges=vip/1')
         user_msg_arr = msg.split(' ')
-
 
         case
         when user_msg_arr[4..-1].at(0).include?('!lightsoff')
@@ -183,7 +185,6 @@ EM.run do
 
       if metadata.include?('bits=')
         bitamt = metadata.split(';').grep(/bits=/)[0].split('=')[-1].to_i
-        puts bitamt.class
         if bitamt > 1000
           partymode(1000)
         elsif bitamt >= 500
@@ -203,11 +204,12 @@ EM.run do
 
       if metadata.include?('color=')
         color = metadata.split(';').grep(/color=/)[0].split('=')[-1]
+        username = metadata.split(';').grep(/display-name=/)[0].split('=')[-1]
         if color == "color"
           color = SecureRandom.hex(3)
         end
-        bulb = Huey::Bulb.find([0, 4].sample)
-        text = Paint["Set color to #{color} on light #{bulb.name}", color]
+        bulb = Huey::Bulb.find(rand(1..4))
+        text = Paint["#{username}'s name set color to #{color} on light #{bulb.name}", color]
         puts text + "\n"
         bulb.update(rgb: color)
       end
