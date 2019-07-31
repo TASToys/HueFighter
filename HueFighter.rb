@@ -48,6 +48,8 @@ debugging = false
 
 # Partymode randoms lights for set number of quarter seconds
 def partymode(ltotal)
+  @i = 0
+  @r = 0
   loop do
     break if @i == ltotal + 1 # Let's leave our loop
 
