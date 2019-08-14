@@ -34,8 +34,7 @@ end
 @group.name = 'HueFighter'
 @group.on = true
 @group.save
-@group.update(rgb: configatron.basecolor)
-
+@group.update(rgb: configatron.basecolor, bri: 255)
 
 # some vars needed inside of party mode
 
@@ -65,7 +64,7 @@ def partymode(ltotal)
   loop do
     break if @r == 1
 
-    @group.update(rgb: configatron.basecolor)
+    @group.update(rgb: configatron.basecolor, bri: 255)
     @r += 1
   end
 end
@@ -119,7 +118,7 @@ EM.run do
 
         when user_msg_arr[4..-1].at(0).include?('!adminreset')
           puts 'HueFighter reset everything.'
-          Huey::Bulb.all.update(on: true, rgb: configatron.basecolor)
+          Huey::Bulb.all.update(on: true, rgb: configatron.basecolor, bri: 255)
 
         when user_msg_arr[4..-1].at(0).include?('!colorforce')
           user_msg_arr.shift
@@ -180,7 +179,7 @@ EM.run do
             @hex_out = ColorConverter.hex(@red, @green, @blue)
             puts "#{user_bit_amt} #{@hex_out} \n"
 
-            @group.update(rgb: @hex_out)
+            @group.update(rgb: @hex_out, bri: 255)
           end
         }
       end
@@ -207,13 +206,13 @@ EM.run do
       if metadata.include?('color=')
         color = metadata.split(';').grep(/color=/)[0].split('=')[-1]
         username = metadata.split(';').grep(/display-name=/)[0].split('=')[-1]
-        if color == "color"
+        if color == 'color'
           color = SecureRandom.hex(3)
         end
         bulb = Huey::Bulb.find(rand(1..4))
         text = Paint["#{username}'s name set color to #{color} on light #{bulb.name}", color]
         puts text + "\n"
-        bulb.update(rgb: color)
+        bulb.update(rgb: color, bri: 255)
       end
     elsif msg.include?(' JOIN ') || msg.include?(' PART ')
     else
